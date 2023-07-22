@@ -8,11 +8,11 @@
 #define sensorPin A0
 #define pompaPin 14
 
-char auth[] = "7GbmyhJhD4tN-o5qshRQpr9jVz-I8bHf";  // You should get Auth Token in the Blynk App.
+char auth[] = "";  // You should get Auth Token in the Blynk App.
 
 // Your WiFi credentials.
-char ssid[] = "Redmi Note IX";
-char pass[] = "kukulkan1";
+char ssid[] = "";
+char pass[] = "";
 
 DHT dht(DHTPIN, DHTTYPE);
 BlynkTimer timer;
