@@ -17,8 +17,8 @@ An Arduino IoT program connected to Blynk to monitor plants and perform watering
 6. PCB 5x7 cm double layer (opsional, I use this to simplify the assembly of components)
 
 ## Blynk App
-<img src="https://github.com/Mysteriza/Smart-Plant-Monitoring/assets/76644526/a308da5e-0765-4ec0-bdb5-528d33a6930d" width="500">
-<img src="https://github.com/Mysteriza/Smart-Plant-Monitoring/assets/76644526/96dc3a24-ba70-4e78-a062-4201003882f5" width="500">
+<img src="https://github.com/Mysteriza/Smart-Plant-Monitoring/assets/76644526/a308da5e-0765-4ec0-bdb5-528d33a6930d" width="300">
+<img src="https://github.com/Mysteriza/Smart-Plant-Monitoring/assets/76644526/96dc3a24-ba70-4e78-a062-4201003882f5" width="300">
 
 ### Datastream:
 1. Water Button = V1
