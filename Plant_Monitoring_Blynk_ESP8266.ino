@@ -3,8 +3,8 @@
 #include <BlynkSimpleEsp8266.h>
 #include <DHT.h>
 
-#define DHTPIN D1          // What digital pin we're connected to
-#define DHTTYPE DHT11     // DHT 11
+#define DHTPIN D1      // What digital pin we're connected to
+#define DHTTYPE DHT11  // DHT 11
 #define sensorPin A0
 #define pompaPin 14
 
@@ -19,13 +19,12 @@ BlynkTimer timer;
 BlynkTimer clearTerminalTimer;
 
 int soil;
-WidgetTerminal terminal(V3); // Set the Terminal Widget to Virtual Pin V3
+WidgetTerminal terminal(V3);  // Set the Terminal Widget to Virtual Pin V3
 
 // This function will be called every time a Widget
 // in Blynk app writes value to the Virtual Pin V1
-BLYNK_WRITE(V1)
-{
-  int pinValue = param.asInt(); // Assigning incoming value from pin V1 to a variable
+BLYNK_WRITE(V1) {
+  int pinValue = param.asInt();  // Assigning incoming value from pin V1 to a variable
 
   // Turn the pump on if 1, off if 0
   if (pinValue == 1) {
@@ -35,11 +34,10 @@ BLYNK_WRITE(V1)
   }
 }
 
-void sendSensor()
-{
+void sendSensor() {
   soil = analogRead(sensorPin);
   float h = dht.readHumidity();
-  float t = dht.readTemperature(); // or dht.readTemperature(true) for Fahrenheit
+  float t = dht.readTemperature();  // or dht.readTemperature(true) for Fahrenheit
 
   // Print the sensor readings to the Serial Monitor
   Serial.print("Humidity: ");
@@ -62,12 +60,11 @@ void sendSensor()
   }
 }
 
-BLYNK_WRITE(V0)
-{
-  int pinValue = param.asInt(); // Assigning incoming value from pin V0 to a variable
+BLYNK_WRITE(V0) {
+  int pinValue = param.asInt();  // Assigning incoming value from pin V0 to a variable
 
   // process received value
-  if(pinValue == 1) {
+  if (pinValue == 1) {
     sendSensor();
     terminal.println("Data Updated!");
     terminal.flush();
@@ -78,21 +75,20 @@ BLYNK_WRITE(V0)
   }
 }
 
-void setup()
-{
+void setup() {
   // Debug console
   Serial.begin(115200);
 
   pinMode(pompaPin, OUTPUT);
-  digitalWrite(pompaPin, LOW); // Ensure the pump is off when the microcontroller powers on or gets a program update
-  
+  digitalWrite(pompaPin, LOW);  // Ensure the pump is off when the microcontroller powers on or gets a program update
+
   WiFi.begin(ssid, pass);
   // check if we are connected to WiFi network
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  
+
   Blynk.begin(auth, ssid, pass);
   dht.begin();
 
@@ -100,8 +96,7 @@ void setup()
   // timer.setInterval(1000L, sendSensor);
 }
 
-void loop()
-{
+void loop() {
   Blynk.run();
   timer.run();
   clearTerminalTimer.run();
