@@ -5,8 +5,8 @@
 
 #define DHTPIN D1      // What digital pin we're connected to
 #define DHTTYPE DHT11  // DHT 11
-#define sensorPin A0
-#define pompaPin 14
+#define soilPin D2     // Use digital pin D2 for soil moisture sensor
+int pompaPin = 14;
 
 char auth[] = "";  // You should get Auth Token in the Blynk App.
 
@@ -16,13 +16,40 @@ char pass[] = "";
 
 DHT dht(DHTPIN, DHTTYPE);
 BlynkTimer timer;
-BlynkTimer clearTerminalTimer;
+BlynkTimer lcdTimer;
+WidgetLCD lcd(V3);
 
-int soil;
-WidgetTerminal terminal(V3);  // Set the Terminal Widget to Virtual Pin V3
+void clearLcd() {
+  lcd.clear();
+}
 
-// This function will be called every time a Widget
-// in Blynk app writes value to the Virtual Pin V1
+void sendSensor() {
+  int soil = digitalRead(soilPin);  // Use digitalRead for soil moisture sensor
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();  // or dht.readTemperature(true) for Fahrenheit
+
+  if (isnan(h) || isnan(t)) {
+    lcd.print(0, 0, "Can't read sensor!");
+  } else {
+    // Send data to corresponding virtual pins on Blynk app
+    Blynk.virtualWrite(V5, h);     // Send humidity data to V5
+    Blynk.virtualWrite(V6, t);     // Send temperature data to V6
+    Blynk.virtualWrite(V7, soil);  // Send soil moisture data to V7
+    lcd.print(0, 0, "Data Updated");
+  }
+
+  lcdTimer.setTimeout(5000L, clearLcd);  // Clear the LCD after 5 seconds
+}
+
+BLYNK_WRITE(V0) {
+  int pinValue = param.asInt();  // Assigning incoming value from pin V0 to a variable
+
+  // process received value
+  if (pinValue == 1) {
+    sendSensor();
+  }
+}
+
 BLYNK_WRITE(V1) {
   int pinValue = param.asInt();  // Assigning incoming value from pin V1 to a variable
 
@@ -34,44 +61,9 @@ BLYNK_WRITE(V1) {
   }
 }
 
-void sendSensor() {
-  soil = analogRead(sensorPin);
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();  // or dht.readTemperature(true) for Fahrenheit
-
-  // Print the sensor readings to the Serial Monitor
-  Serial.print("Humidity: ");
-  Serial.print(h);
-  Serial.print(" %\t");
-  Serial.print("Temperature: ");
-  Serial.print(t);
-  Serial.print(" *C\t");
-  Serial.print("Soil Moisture: ");
-  Serial.println(soil);
-
-  // check if returns are valid, if they are NaN (not a number) then something went wrong!
-  if (!isnan(t) && !isnan(h)) {
-    Blynk.virtualWrite(V5, h);
-    Blynk.virtualWrite(V6, t);
-    Blynk.virtualWrite(V7, soil);
-  } else {
-    terminal.println("Failed to read from DHT sensor!");
-    terminal.flush();
-  }
-}
-
-BLYNK_WRITE(V0) {
-  int pinValue = param.asInt();  // Assigning incoming value from pin V0 to a variable
-
-  // process received value
-  if (pinValue == 1) {
-    sendSensor();
-    terminal.println("Data Updated!");
-    terminal.flush();
-    clearTerminalTimer.setTimeout(5000L, []() {
-      terminal.clear();
-      terminal.flush();
-    });
+void checkConnection() {
+  if (!Blynk.connected()) {
+    Blynk.connect();  // attempt to reconnect to server
   }
 }
 
@@ -82,6 +74,8 @@ void setup() {
   pinMode(pompaPin, OUTPUT);
   digitalWrite(pompaPin, LOW);  // Ensure the pump is off when the microcontroller powers on or gets a program update
 
+  pinMode(soilPin, INPUT);  // Set soil moisture sensor pin as input
+
   WiFi.begin(ssid, pass);
   // check if we are connected to WiFi network
   while (WiFi.status() != WL_CONNECTED) {
@@ -91,13 +85,10 @@ void setup() {
 
   Blynk.begin(auth, ssid, pass);
   dht.begin();
-
-  // Setup a function to be called every second
-  // timer.setInterval(1000L, sendSensor);
 }
 
 void loop() {
   Blynk.run();
   timer.run();
-  clearTerminalTimer.run();
+  lcdTimer.run();
 }
