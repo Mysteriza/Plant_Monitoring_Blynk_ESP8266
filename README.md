@@ -30,5 +30,3 @@ An Arduino IoT program connected to Blynk to monitor plants and perform watering
 
 ## Schematic
 I don't have time to make a schematic, so maybe you can check inside the Arduino program what needs to be connected to each pin.
-
-# Any suggestions? Write it down in Discussion!
