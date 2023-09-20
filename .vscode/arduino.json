@@ -1,0 +1,5 @@
+{
+    "sketch": "Plant_Monitoring_Blynk_ESP8266.ino",
+    "configuration": "BoardModel=primo,xtal=80,vt=flash,exception=disabled,stacksmash=disabled,ssl=all,mmu=3232,non32xfer=fast,eesz=4M2M,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=115200",
+    "board": "esp8266:esp8266:arduino-esp8266"
+}
